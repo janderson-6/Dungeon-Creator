@@ -4,17 +4,23 @@ using UnityEngine;
 using UnityEditor;
 
 
-public class uielements : MonoBehaviour
+public class uielements : EditorWindow
 {
-    // Start is called before the first frame update
-    void Start()
+    #region Menu Items
+    [MenuItem("Dungeon Creator/Edit Dungeon")]
+    private static void OpenRoomplacementWindow()
     {
-        
+        uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), true, "Edit Dungeon");
+        window.Show();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //[MenuItem("Dungeon Creator/Room Editor")]
+    //private static void OpenRoomEditorWindow()
+    //{
+    //    uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), false, "Room Editor");
+    //    window.Show();
+    //}
+
+    #endregion 
+
 }
