@@ -32,14 +32,14 @@ public class uielements : EditorWindow
         texture.Apply();
     }
 
-    void OnGUI()
-    { 
-        GUI.DrawTexture(new Rect(0, 0, 100, 100))
-    
-    
-    
-    
-    }
+  //  void OnGUI()
+  //  { 
+  //      GUI.DrawTexture(new Rect(0, 0, 100, 100))
+  //  
+  //  
+  //  
+  //  
+  //  }
 
 
 }
