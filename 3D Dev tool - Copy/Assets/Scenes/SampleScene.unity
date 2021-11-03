@@ -7806,15 +7806,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18
+      value: 15.78
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.062
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 25
+      value: 25.84
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7844,6 +7844,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0d186d36ae2895d4d84a862aa81a1c21, type: 2}
     - target: {fileID: 919132149155446097, guid: 1d66f4918fcb8ed41949167e63376f37, type: 3}
       propertyPath: m_Name
       value: Single Tile
