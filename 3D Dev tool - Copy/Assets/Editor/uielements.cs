@@ -15,7 +15,9 @@ public class uielements : EditorWindow
     Color[] blueblock = { new Color32(0, 0, 255, 255) };
     int blocksize = 50;
     int border = 0;
-    int background = 500;  
+    int background = 500;
+    int unityxvalue = 0;
+    int unityyvalue = 0;
 
     //Menu Item single drop down
     #region Menu Items
@@ -24,17 +26,26 @@ public class uielements : EditorWindow
     {
         uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), true, "Edit Dungeon");
         window.Show();
-
-       
-
     }
+    //static void Create()
+    //{
+    //    for (int x = 0; x != 10; x++)
+    //    {
+    //        GameObject go = new GameObject("Single Tile" + x);
+    //        go.transform.position = new Vector3(x, 0, 0);
+    //    }
+    //}
+
+
+
+
 
     void OnEnable()
     {
-        redblock = new Color[blocksize  * blocksize];
-        for (int i = 0; i < blocksize * blocksize ; i++)
+        redblock = new Color[blocksize * blocksize];
+        for (int i = 0; i < blocksize * blocksize; i++)
         {
-            redblock[i] = Color.red;   
+            redblock[i] = Color.red;
         }
         greenblock = new Color[blocksize * blocksize];
         for (int i = 0; i < blocksize * blocksize; i++)
@@ -49,7 +60,7 @@ public class uielements : EditorWindow
 
 
         texture = new Texture2D(background, background);
-        
+
         for (int x = 0; x < texture.height; x++)
         {
             for (int y = 0; y < texture.width; y++)
@@ -63,7 +74,7 @@ public class uielements : EditorWindow
     }
 
 
-    
+
 
 
 
@@ -71,70 +82,58 @@ public class uielements : EditorWindow
     void OnGUI()
     {
 
-
+        //debug descriptions for co-ords
         range = range + Time.deltaTime;
         if (range > 0.1f)
         {
             Event e = Event.current;
-            Debug.Log("Base Co-ords"+ e.mousePosition +" "+"Placement at: "+ Floor(e.mousePosition.x) +" "+ Ceil(e.mousePosition.y) + Environment.NewLine +"Upper Bounds "+ Ceil(e.mousePosition.x) +" "+ Ceil(e.mousePosition.y) +"  "+"Lower Bounds "+ Floor(e.mousePosition.x) +" "+ Floor(e.mousePosition.y));
+            Debug.Log("Base Co-ords" + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
             range = 0.0f;
         }
 
-        if (Event.current.mousePosition.x >= Floor(Event.current.mousePosition.x) && Event.current.mousePosition.x  < Ceil(Event.current.mousePosition.x))
+        //Using mouse co-ords for square co-ords
+        if (Event.current.mousePosition.x >= Floor(Event.current.mousePosition.x) && Event.current.mousePosition.x < Ceil(Event.current.mousePosition.x))
         {
             xblock = (int)Floor(Event.current.mousePosition.x);
+            unityxvalue = ((int)Floor(Event.current.mousePosition.x) / blocksize);
         }
         if (Event.current.mousePosition.y >= Floor(Event.current.mousePosition.y) && Event.current.mousePosition.y < Ceil(Event.current.mousePosition.y))
         {
             yblock = (int)Ceil(Event.current.mousePosition.y);
+            unityyvalue = ((int)Floor(Event.current.mousePosition.y) / blocksize);
         }
 
-
-
-
-        //if button pressed
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
-        {   //if within border place red square on left click
+        //changing input for changing colours
+        if (Event.current.type == EventType.MouseDown)
+        {
             if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
             {
-                texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
-                Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                if (Event.current.button == 0)
+                {
+                    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
+                    //Create();
+                    Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                }
+                if (Event.current.button == 1)
+                {
+                    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, greenblock);
+                    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                }
+                if (Event.current.button == 2)
+                {
+                    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, blueblock); ;
+                    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                }
             }
         }
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
-        {   //if within borderplace green square on right click
-            if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
-            {
-                texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, greenblock);
-                Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-            }
-
-        }
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 2)
-        {   //if within borderplace green square on right click
-            if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
-            {
-                texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, blueblock);;
-                Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-            }
-
-        }
-
-
-
         texture.Apply();
-            Repaint();
-            GUI.DrawTexture(new Rect(0, 0, background, background), texture);
-
-
-        
+        Repaint();
+        GUI.DrawTexture(new Rect(0, 0, background, background), texture);
     }
-
- 
     private float Round(float input)
     {
         return blocksize * Mathf.Round((input / blocksize));
-        
+
     }
     private float Floor(float input)
     {
