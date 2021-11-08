@@ -16,8 +16,8 @@ public class uielements : EditorWindow
     int blocksize = 50;
     int border = 0;
     int background = 500;
-    int unityxvalue = 0;
-    int unityyvalue = 0;
+    static int unityxvalue = 0;
+    static int unityyvalue = 0;
 
     //Menu Item single drop down
     #region Menu Items
@@ -27,21 +27,25 @@ public class uielements : EditorWindow
         uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), true, "Edit Dungeon");
         window.Show();
     }
-    //static void Create()
-    //{
-    //    for (int x = 0; x != 10; x++)
-    //    {
-    //        GameObject go = new GameObject("Single Tile" + x);
-    //        go.transform.position = new Vector3(x, 0, 0);
-    //    }
-    //}
+    static void Create()
+    { 
+        GameObject instance = Instantiate(Resources.Load("Assets/Single Tile")) as GameObject;
+        Renderer rend = instance.GetComponent<Renderer>();
+        //rend.material.mainTexture = Resources.Load("Invis") as Texture;
+        instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
 
+    }
+    static void Checkarea()
+    {
+        
+    }
 
 
 
 
     void OnEnable()
     {
+        //Example grid block colours
         redblock = new Color[blocksize * blocksize];
         for (int i = 0; i < blocksize * blocksize; i++)
         {
@@ -58,9 +62,7 @@ public class uielements : EditorWindow
             blueblock[i] = Color.blue;
         }
 
-
         texture = new Texture2D(background, background);
-
         for (int x = 0; x < texture.height; x++)
         {
             for (int y = 0; y < texture.width; y++)
@@ -104,14 +106,14 @@ public class uielements : EditorWindow
         }
 
         //changing input for changing colours
-        if (Event.current.type == EventType.MouseDown)
+        if (Event.current.type == EventType.MouseDrag)
         {
             if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
             {
                 if (Event.current.button == 0)
                 {
                     texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
-                    //Create();
+                    Create();
                     Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
                 }
                 if (Event.current.button == 1)
@@ -130,6 +132,7 @@ public class uielements : EditorWindow
         Repaint();
         GUI.DrawTexture(new Rect(0, 0, background, background), texture);
     }
+    //Math for rounding for upper and lower bounds
     private float Round(float input)
     {
         return blocksize * Mathf.Round((input / blocksize));
