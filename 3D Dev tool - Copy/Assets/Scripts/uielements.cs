@@ -39,21 +39,19 @@ public class uielements : EditorWindow
     }
     void Create()
     { 
-        GameObject instance = Instantiate(Resources.Load("Assets/Single Tile")) as GameObject;
-        Renderer rend = instance.GetComponent<Renderer>();
-        instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
-
         if (currentManager != null)
         {
-            currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
-            instance.transform.SetParent(currentManager.gameObject.transform, true);
+            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
+            {
+                GameObject instance = Instantiate(Resources.Load("Assets/Single Tile")) as GameObject;
+                Renderer rend = instance.GetComponent<Renderer>();
+                instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
+                currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
+                instance.transform.SetParent(currentManager.gameObject.transform, true);
+            }
         }
     }
-    static void Checkarea()
-    {
-        
-    }
-
+    
     void OnEnable()
     {
         ChangeState(UIdata.MainMenu);
@@ -94,19 +92,19 @@ public class uielements : EditorWindow
         {
             for (int i = 0; i < allTileManagers.Length; i++)
             {
-                if (GUILayout.Button("Open" + allTileManagers[i].name))
+                if (GUILayout.Button("Open " + allTileManagers[i].name))
                 {
-                    ChangeState(UIdata.Drawing);
                     currentManager = allTileManagers[i];
+                    ChangeState(UIdata.Drawing);
                 }
             }
             if (GUILayout.Button("Draw new room"))
             {
-                ChangeState(UIdata.Drawing);
                 GameObject NewTileManager = new GameObject();
-                NewTileManager.name = "Tile Manager" + allTileManagers.Length;
+                NewTileManager.name = "Room " + allTileManagers.Length;
                 NewTileManager.AddComponent<Tilemanager>().tilesInThisObject = new GameObject[background / blocksize, background / blocksize];
                 currentManager = NewTileManager.GetComponent<Tilemanager>();
+                ChangeState(UIdata.Drawing);
             }
         }
         #endregion
@@ -119,7 +117,7 @@ public class uielements : EditorWindow
             if (range > 0.1f)
             {
                 Event e = Event.current;
-                Debug.Log("Base Co-ords" + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
+                Debug.Log("Base Co-ords " + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
                 range = 0.0f;
             }
 
@@ -172,20 +170,19 @@ public class uielements : EditorWindow
         {
            allTileManagers = FindObjectsOfType<Tilemanager>();
         }
-        if (currentState == UIdata.Drawing)
-        {
-            
-            //for (int x = 0; x < currentManager.tilesInThisObject.GetLength(0); x++)
-            //{  
-            //   for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
-            //   {
-            //      if (currentManager.tilesInThisObject[x, y] != null)
-            //      {
-            //          texture.SetPixels((blocksize * x), (blocksize * y), blocksize, blocksize, redblock);
-            //      }
-             //  }
-             //}
-        }        
+    if (currentState == UIdata.Drawing)
+    {           
+        for (int x = 0; x < currentManager.tilesInThisObject.GetLength(0); x++)
+        {  
+            for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
+            {
+                    if (currentManager.tilesInThisObject[x, y] != null)
+                    {
+                        texture.SetPixels(blocksize * x, blocksize * y, blocksize, blocksize, redblock);
+                    }
+                }
+            }
+        }      
     }
 
 
@@ -205,6 +202,7 @@ public class uielements : EditorWindow
         return blocksize * Mathf.Ceil((input / blocksize));
 
     }
+
 }
 #endregion
 
