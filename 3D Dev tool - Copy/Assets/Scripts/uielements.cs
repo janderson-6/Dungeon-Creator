@@ -170,15 +170,15 @@ public class uielements : EditorWindow
         {
            allTileManagers = FindObjectsOfType<Tilemanager>();
         }
-    if (currentState == UIdata.Drawing)
-    {           
-        for (int x = 0; x < currentManager.tilesInThisObject.GetLength(0); x++)
-        {  
-            for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
+        if (currentState == UIdata.Drawing)
+        {
+            for (int x = 0; x < currentManager.tilesInThisObject.GetLength(0); x++)
             {
+                for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
+                {
                     if (currentManager.tilesInThisObject[x, y] != null)
-                    {
-                        texture.SetPixels(blocksize * x, blocksize * y, blocksize, blocksize, redblock);
+                    {   //here is the problem, this value does not save correctly
+                        texture.SetPixels((blocksize * x), (blocksize * y), blocksize, blocksize, redblock);
                     }
                 }
             }
