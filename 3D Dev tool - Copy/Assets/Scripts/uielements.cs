@@ -159,7 +159,8 @@ public class uielements : EditorWindow
             texture.Apply();
             Repaint();
             GUI.DrawTexture(new Rect(0, 0, background, background), texture);
-        }
+           
+            }
         #endregion
     }
 
@@ -177,9 +178,10 @@ public class uielements : EditorWindow
                 for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
                 {
                     if (currentManager.tilesInThisObject[x, y] != null)
-                    {   //here is the problem, this value does not save correctly
-                        texture.SetPixels((blocksize * x), blocksize * (currentManager.tilesInThisObject.GetLength(1) - (y+1)), blocksize, blocksize, redblock);
-                    }
+                    {
+                        texture.SetPixels((blocksize * x), blocksize * (currentManager.tilesInThisObject.GetLength(1) - (y + 1)), blocksize, blocksize, redblock);
+                    }                    
+                                        
                 }
             }
         }      
