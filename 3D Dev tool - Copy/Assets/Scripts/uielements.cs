@@ -43,7 +43,7 @@ public class uielements : EditorWindow
         {
             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
             {
-                GameObject instance = Instantiate(Resources.Load("Assets/Single Tile")) as GameObject;
+                GameObject instance = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
                 Renderer rend = instance.GetComponent<Renderer>();
                 instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
                 currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
