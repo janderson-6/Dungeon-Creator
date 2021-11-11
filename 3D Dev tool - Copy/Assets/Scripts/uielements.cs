@@ -178,7 +178,7 @@ public class uielements : EditorWindow
                 {
                     if (currentManager.tilesInThisObject[x, y] != null)
                     {   //here is the problem, this value does not save correctly
-                        texture.SetPixels((blocksize * x), blocksize * (currentManager.tilesInThisObject.GetLength(1) - y), blocksize, blocksize, redblock);
+                        texture.SetPixels((blocksize * x), blocksize * (currentManager.tilesInThisObject.GetLength(1) - (y+1)), blocksize, blocksize, redblock);
                     }
                 }
             }
