@@ -34,7 +34,7 @@ public class uielements : EditorWindow
     [MenuItem("Dungeon Creator/Open Editor")]
     private static void OpenRoomplacementWindow()
     {
-        uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), true, "Open Editor");
+        uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), false, "Open Editor");
         window.Show();
     }
     void Create()
