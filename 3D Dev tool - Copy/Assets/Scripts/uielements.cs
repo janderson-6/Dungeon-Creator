@@ -45,9 +45,16 @@ public class uielements : EditorWindow
             {
                 GameObject instance = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
                 Renderer rend = instance.GetComponent<Renderer>();
-                instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
+                instance.transform.position = new Vector3Int(-unityxvalue + ((int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
                 currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
+
+                if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance)
+                { 
+                    
+                }
+
                 instance.transform.SetParent(currentManager.gameObject.transform, true);
+
             }
         }
     }
@@ -158,9 +165,13 @@ public class uielements : EditorWindow
             }
             texture.Apply();
             Repaint();
+            GUILayout.BeginArea(new Rect(0, 0, background, background));
             GUI.DrawTexture(new Rect(0, 0, background, background), texture);
-           
-            }
+            GUILayout.EndArea();
+
+            if (GUILayout.Button("Back"))
+            { ChangeState(UIdata.MainMenu); }
+        }
         #endregion
     }
 
@@ -171,8 +182,20 @@ public class uielements : EditorWindow
         {
            allTileManagers = FindObjectsOfType<Tilemanager>();
         }
+
         if (currentState == UIdata.Drawing)
         {
+            for (int x = 0; x < texture.height; x++)
+            {
+                for (int y = 0; y < texture.width; y++)
+                {
+                    Color color = Color.gray;
+                    texture.SetPixel(x, y, color);
+                }
+            }
+            texture.Apply();
+            Repaint();
+
             for (int x = 0; x < currentManager.tilesInThisObject.GetLength(0); x++)
             {
                 for (int y = 0; y < currentManager.tilesInThisObject.GetLength(1); y++)
