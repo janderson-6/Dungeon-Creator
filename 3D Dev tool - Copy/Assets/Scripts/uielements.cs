@@ -13,6 +13,8 @@ enum UIdata
 
 public class uielements : EditorWindow
 {
+
+    //Variables
     UIdata currentState = UIdata.MainMenu;
     Tilemanager currentManager;
     Tilemanager[] allTileManagers = new Tilemanager[0];
@@ -26,8 +28,8 @@ public class uielements : EditorWindow
     int blocksize = 50;
     int border = 0;
     int background = 500;
-    static int unityxvalue = 0;
-    static int unityyvalue = 0;
+    int unityxvalue = 0;
+    int unityyvalue = 0;
 
     //Menu Item single drop down
     #region Open Editor
@@ -37,21 +39,7 @@ public class uielements : EditorWindow
         uielements window = (uielements)EditorWindow.GetWindow(typeof(uielements), false, "Open Editor");
         window.Show();
     }
-    void Create()
-    { 
-        if (currentManager != null)
-        {
-            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
-            {
-                GameObject instance = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
-                Renderer rend = instance.GetComponent<Renderer>();
-                instance.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
-                currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
-                instance.transform.SetParent(currentManager.gameObject.transform, true);
-            }
-        }
-    }
-    
+        
     void OnEnable()
     {
         ChangeState(UIdata.MainMenu);
@@ -164,6 +152,8 @@ public class uielements : EditorWindow
         #endregion
     }
 
+
+    //Changing states
     void ChangeState(UIdata newState)
     {
         currentState = newState;
@@ -187,7 +177,6 @@ public class uielements : EditorWindow
         }      
     }
 
-
     //Math for rounding for upper and lower bounds
     private float Round(float input)
     {
@@ -203,6 +192,93 @@ public class uielements : EditorWindow
     {
         return blocksize * Mathf.Ceil((input / blocksize));
 
+    }
+    //Spawning floors
+    void Create()
+    {
+        if (currentManager != null)
+        {
+            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
+            {
+                GameObject floortile = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
+                Renderer rend = floortile.GetComponent<Renderer>();
+                floortile.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
+                currentManager.tilesInThisObject[unityxvalue, unityyvalue] = floortile;
+                floortile.transform.SetParent(currentManager.gameObject.transform, true);
+
+                if (0 == unityxvalue)
+                {
+                    Leftwall();
+                }
+                if (9 == unityxvalue)
+                {
+                    Rightwall();
+                }
+                if (0 == unityyvalue)
+                {
+                    Frontwall();
+                }
+                if (9 == unityyvalue)
+                {
+                    Backwall();
+                }
+
+                if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
+                {
+                    Rightwall();
+                }
+                if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
+                {
+                    Leftwall();
+                }
+                if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
+                {
+                    Frontwall();
+                }
+                if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
+                {
+                    Backwall();
+                }
+            }
+        }
+    }
+    //Spawning walls
+    void Leftwall()
+    {   //check spaces to the left
+        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+        Renderer rendwall = walltile.GetComponent<Renderer>();
+        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
+        walltile.transform.Rotate(0.0f, 270.0f, 0.0f, Space.Self);
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        walltile.transform.SetParent(currentManager.gameObject.transform, true);
+    }
+    void Rightwall()
+    {   //check spaces to the right
+        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+        Renderer rendwall = walltile.GetComponent<Renderer>();
+        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+        walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        walltile.transform.SetParent(currentManager.gameObject.transform, true);
+    }
+    void Backwall()
+    {   //check spaces behind
+        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+        Renderer rendwall = walltile.GetComponent<Renderer>();
+        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+        walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        walltile.transform.SetParent(currentManager.gameObject.transform, true);
+    }
+
+    void Frontwall()
+    {   //check spaces in front
+        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+        Renderer rendwall = walltile.GetComponent<Renderer>();
+        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
+        walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        walltile.transform.SetParent(currentManager.gameObject.transform, true);
     }
 
 }
