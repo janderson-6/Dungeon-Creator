@@ -45,7 +45,7 @@ public class uielements : EditorWindow
             {
                 GameObject instance = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
                 Renderer rend = instance.GetComponent<Renderer>();
-                instance.transform.position = new Vector3Int(-unityxvalue, 0, unityyvalue);
+                instance.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
                 currentManager.tilesInThisObject[unityxvalue, unityyvalue] = instance;
                 instance.transform.SetParent(currentManager.gameObject.transform, true);
             }
