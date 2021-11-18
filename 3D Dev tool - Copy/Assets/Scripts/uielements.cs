@@ -213,7 +213,7 @@ public class uielements : EditorWindow
                 if (9 == unityxvalue)
                 {
                     Rightwall();
-                }
+                } 
                 if (0 == unityyvalue)
                 {
                     Frontwall();
