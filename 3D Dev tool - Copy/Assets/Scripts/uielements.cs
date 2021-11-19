@@ -8,7 +8,6 @@ enum UIdata
 {
     MainMenu,
     Drawing
-    
 }
 
 public class uielements : EditorWindow
@@ -23,8 +22,6 @@ public class uielements : EditorWindow
     int xblock;
     int yblock;
     Color[] redblock = { new Color32(225, 0, 0, 255) };
-    //Color[] greenblock = { new Color32(0, 255, 0, 255) };
-    //Color[] blueblock = { new Color32(0, 0, 255, 255) };
     Color[] grayblock = { new Color32(128, 128, 128, 1) };
     int blocksize = 50;
     int border = 0;
@@ -50,16 +47,7 @@ public class uielements : EditorWindow
         {
             redblock[i] = Color.red;
         }
-        //greenblock = new Color[blocksize * blocksize];
-        //for (int i = 0; i < blocksize * blocksize; i++)
-        //{
-        //    greenblock[i] = Color.green;
-        //}
-        //blueblock = new Color[blocksize * blocksize];
-        //for (int i = 0; i < blocksize * blocksize; i++)
-        //{
-        //    blueblock[i] = Color.blue;
-        //}
+     
         grayblock = new Color[blocksize * blocksize];
         for (int i = 0; i < blocksize * blocksize; i++)
         {
@@ -81,6 +69,7 @@ public class uielements : EditorWindow
 
     void OnGUI()
     {
+        //Main Menu Options
         #region Mainmenu
         if (currentState == UIdata.MainMenu)
         {
@@ -92,14 +81,14 @@ public class uielements : EditorWindow
                     ChangeState(UIdata.Drawing);
                 }
             }
-            if (GUILayout.Button("Draw new room"))
-            {
-                GameObject NewTileManager = new GameObject();
-                NewTileManager.name = "Room " + allTileManagers.Length;
-                NewTileManager.AddComponent<Tilemanager>().tilesInThisObject = new GameObject[background / blocksize, background / blocksize];
-                currentManager = NewTileManager.GetComponent<Tilemanager>();
-                ChangeState(UIdata.Drawing);
-            }
+         if (GUILayout.Button("Draw new room"))
+         {
+             GameObject NewTileManager = new GameObject();
+             NewTileManager.name = "Room " + allTileManagers.Length;
+             NewTileManager.AddComponent<Tilemanager>().tilesInThisObject = new GameObject[background / blocksize, background / blocksize];
+             currentManager = NewTileManager.GetComponent<Tilemanager>();
+             ChangeState(UIdata.Drawing);
+         }
         }
         #endregion
 
@@ -127,7 +116,7 @@ public class uielements : EditorWindow
                 unityyvalue = ((int)Floor(Event.current.mousePosition.y) / blocksize);
             }
 
-            //changing input for changing colours
+            //Set pixels on texture
             if (Event.current.type == EventType.MouseDrag || Event.current.type == EventType.MouseDown)
             {
                 if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
@@ -143,17 +132,7 @@ public class uielements : EditorWindow
                         texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, grayblock);
                         Remove();
                     }
-                    //TEST VALUES
-                    //if (Event.current.button == 1)
-                    //{
-                    //    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, greenblock);
-                    //    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-                    //}
-                    //if (Event.current.button == 2)
-                    //{
-                    //    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, blueblock); 
-                    //    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-                    //}
+                  
                 }
             }
             texture.Apply();
@@ -209,51 +188,97 @@ public class uielements : EditorWindow
     void Create()
     {
         if (currentManager != null)
+
         {
             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
             {
-                GameObject floortile = Instantiate(Resources.Load("Assets/Tile Square stone 1")) as GameObject;
+                GameObject floortile = Instantiate(Resources.Load("Assets/Tile Cobblestone 1")) as GameObject;
                 Renderer rend = floortile.GetComponent<Renderer>();
                 floortile.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
                 currentManager.tilesInThisObject[unityxvalue, unityyvalue] = floortile;
                 floortile.transform.SetParent(currentManager.gameObject.transform, true);
 
+
+                //LEFTWALLS
+                //IF ON VERY LEFT
                 if (0 == unityxvalue)
                 {
                     Leftwall();
                 }
-                if (9 == unityxvalue)
+                //REMOVING WRONG WALLS
+                else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
                 {
-                    Rightwall();
-                } 
-                if (0 == unityyvalue)
-                {
-                    Frontwall();
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
                 }
-                if (9 == unityyvalue)
-                {
-                    Backwall();
-                }
-
-                if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
-                {
-                    Rightwall();
-                }
-                if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
+                //MAKING WALLS FOR EDGE LEFT FLOOR
+                else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
                 {
                     Leftwall();
                 }
-                if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
+
+
+                //RIGHTWALLS
+                //IF ON VERY RIGHT
+                if (currentManager.tilesInThisObject.GetLength(0)-1 == unityxvalue)
+                {
+                    Rightwall();
+                }
+                //REMOVING WRONG WALLS
+                else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+                {
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
+                }
+                //MAKING WALLS FOR EDGE RIGHT FLOOR
+                else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
+                {
+                    Rightwall();
+                }
+
+
+                //FRONTWALLS
+                //IF ON VERY FRONT
+                if (0 == unityyvalue) 
                 {
                     Frontwall();
                 }
-                if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
+                //REMOVING WRONG WALLS
+                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] != null)
+                {
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1].GetComponent<Allwalls>().walltiles[2]);
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3]);
+                }
+                //MAKING WALLS FOR EDGE FRONT FLOOR
+                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
+                {
+                    Frontwall();
+                }
+
+
+                //BACKWALLS
+                //IF ON VERY BACK
+                if (currentManager.tilesInThisObject.GetLength(1)-1 == unityyvalue)
                 {
                     Backwall();
                 }
+                //REMOVING WRONG WALLS
+                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] != null)
+                {
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1].GetComponent<Allwalls>().walltiles[3]);
+                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2]);
+                }
+                //MAKING WALLS FOR EDGE FRONT FLOOR
+                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
+                {
+                    Backwall();
+                }
+                
+
             }
         }
     }
+
     //Remove Floor
     void Remove()
     {
@@ -261,13 +286,23 @@ public class uielements : EditorWindow
         {
             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] != null)
             {
-                //GetComponent < currentManager.tilesInThisObject;
-                DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue]);
-                //DestroyImmediate(this.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z)));
+                for (int i = 0; i < 4; i++)
+                {
+                    
+                    if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[i] != null)
+                    {
+                        DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[i]);
+                        
+                    }
+                } 
+                        DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
+                        Debug.Log("Square removed");
+                        
             }
+            
         }
+        
     }
-
 
     //Spawning walls
     void Leftwall()
@@ -276,7 +311,7 @@ public class uielements : EditorWindow
         Renderer rendwall = walltile.GetComponent<Renderer>();
         walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
         walltile.transform.Rotate(0.0f, 270.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0] = walltile;
         walltile.transform.SetParent(currentManager.gameObject.transform, true);
     }
     void Rightwall()
@@ -285,7 +320,7 @@ public class uielements : EditorWindow
         Renderer rendwall = walltile.GetComponent<Renderer>();
         walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
         walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1] = walltile;
         walltile.transform.SetParent(currentManager.gameObject.transform, true);
     }
     void Backwall()
@@ -294,7 +329,7 @@ public class uielements : EditorWindow
         Renderer rendwall = walltile.GetComponent<Renderer>();
         walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
         walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2] = walltile;
         walltile.transform.SetParent(currentManager.gameObject.transform, true);
     }
 
@@ -304,7 +339,7 @@ public class uielements : EditorWindow
         Renderer rendwall = walltile.GetComponent<Renderer>();
         walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
         walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = walltile;
+        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3] = walltile;
         walltile.transform.SetParent(currentManager.gameObject.transform, true);
     }
 
