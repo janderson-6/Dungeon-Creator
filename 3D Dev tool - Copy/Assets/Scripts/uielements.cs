@@ -23,8 +23,9 @@ public class uielements : EditorWindow
     int xblock;
     int yblock;
     Color[] redblock = { new Color32(225, 0, 0, 255) };
-    Color[] greenblock = { new Color32(0, 255, 0, 255) };
-    Color[] blueblock = { new Color32(0, 0, 255, 255) };
+    //Color[] greenblock = { new Color32(0, 255, 0, 255) };
+    //Color[] blueblock = { new Color32(0, 0, 255, 255) };
+    Color[] grayblock = { new Color32(128, 128, 128, 1) };
     int blocksize = 50;
     int border = 0;
     int background = 500;
@@ -49,15 +50,20 @@ public class uielements : EditorWindow
         {
             redblock[i] = Color.red;
         }
-        greenblock = new Color[blocksize * blocksize];
+        //greenblock = new Color[blocksize * blocksize];
+        //for (int i = 0; i < blocksize * blocksize; i++)
+        //{
+        //    greenblock[i] = Color.green;
+        //}
+        //blueblock = new Color[blocksize * blocksize];
+        //for (int i = 0; i < blocksize * blocksize; i++)
+        //{
+        //    blueblock[i] = Color.blue;
+        //}
+        grayblock = new Color[blocksize * blocksize];
         for (int i = 0; i < blocksize * blocksize; i++)
         {
-            greenblock[i] = Color.green;
-        }
-        blueblock = new Color[blocksize * blocksize];
-        for (int i = 0; i < blocksize * blocksize; i++)
-        {
-            blueblock[i] = Color.blue;
+            grayblock[i] = Color.gray;
         }
 
         texture = new Texture2D(background, background);
@@ -134,14 +140,20 @@ public class uielements : EditorWindow
                     }
                     if (Event.current.button == 1)
                     {
-                        texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, greenblock);
-                        Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                        texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, grayblock);
+                        Remove();
                     }
-                    if (Event.current.button == 2)
-                    {
-                        texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, blueblock); 
-                        Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-                    }
+                    //TEST VALUES
+                    //if (Event.current.button == 1)
+                    //{
+                    //    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, greenblock);
+                    //    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                    //}
+                    //if (Event.current.button == 2)
+                    //{
+                    //    texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, blueblock); 
+                    //    Debug.Log("Green Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                    //}
                 }
             }
             texture.Apply();
@@ -242,6 +254,21 @@ public class uielements : EditorWindow
             }
         }
     }
+    //Remove Floor
+    void Remove()
+    {
+        if (currentManager != null)
+        {
+            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] != null)
+            {
+                //GetComponent < currentManager.tilesInThisObject;
+                DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue]);
+                //DestroyImmediate(this.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z)));
+            }
+        }
+    }
+
+
     //Spawning walls
     void Leftwall()
     {   //check spaces to the left
