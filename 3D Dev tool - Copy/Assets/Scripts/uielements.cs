@@ -7,7 +7,8 @@ using System;
 enum UIdata
 {
     MainMenu,
-    Drawing
+    Drawing,
+    Materials
 }
 
 public class uielements : EditorWindow
@@ -75,10 +76,15 @@ public class uielements : EditorWindow
         {
             for (int i = 0; i < allTileManagers.Length; i++)
             {
-                if (GUILayout.Button("Open " + allTileManagers[i].name))
+                if (GUILayout.Button("Edit " + allTileManagers[i].name + " tiles"))
                 {
                     currentManager = allTileManagers[i];
                     ChangeState(UIdata.Drawing);
+                }
+                if (GUILayout.Button("Edit " + allTileManagers[i].name + " Materials"))
+                {
+                    currentManager = allTileManagers[i];
+                    ChangeState(UIdata.Materials);
                 }
             }
          if (GUILayout.Button("Draw new room"))
@@ -100,7 +106,7 @@ public class uielements : EditorWindow
             if (range > 0.1f)
             {
                 Event e = Event.current;
-                Debug.Log("Base Co-ords " + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
+                //Debug.Log("Base Co-ords " + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
                 range = 0.0f;
             }
 
@@ -125,7 +131,7 @@ public class uielements : EditorWindow
                     {
                         texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
                         Create();
-                        Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                        //Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
                     }
                     if (Event.current.button == 1)
                     {
@@ -141,7 +147,17 @@ public class uielements : EditorWindow
            
             }
         #endregion
-    }
+
+        #region Materials
+        if (currentState == UIdata.Materials)
+        {
+            //this code does nothing
+            Changematerials();
+        }
+
+
+            #endregion
+      }
 
 
     //Changing states
@@ -279,6 +295,15 @@ public class uielements : EditorWindow
         }
     }
 
+    void Changematerials()
+    {//this function does nothing
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] != null)
+        {//this calls nothing
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Renderer>().sharedMaterials[0] = (Material)Resources.Load("Materials/Dark Stone");
+            
+        }
+    }
+
     //Remove Floor
     void Remove()
     {
@@ -296,7 +321,7 @@ public class uielements : EditorWindow
                     }
                 } 
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
-                        Debug.Log("Square removed");
+                        //Debug.Log("Square removed");
                         
             }
             
