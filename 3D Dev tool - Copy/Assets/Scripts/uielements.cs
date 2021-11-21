@@ -320,7 +320,9 @@ public class uielements : EditorWindow
                         
                     }
                 } 
+
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
+                        
                         //Debug.Log("Square removed");
                         
             }
