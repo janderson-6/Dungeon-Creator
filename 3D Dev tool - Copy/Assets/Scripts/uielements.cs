@@ -189,6 +189,14 @@ public class uielements : EditorWindow
             redblock[i] = newColour;
         }
     }
+    void Changematerials()
+    {//this function does nothing
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] != null)
+        {//this calls nothing
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Renderer>().material = Selectedmaterial;
+
+        }
+    }
 
     //Changing states
     void ChangeState(UIdata newState)
@@ -219,7 +227,6 @@ public class uielements : EditorWindow
     }
 
     //Math for rounding for upper and lower bounds
-   
     private float Floor(float input)
     {
         return blocksize * Mathf.Floor((input / blocksize));
@@ -230,6 +237,7 @@ public class uielements : EditorWindow
         return blocksize * Mathf.Ceil((input / blocksize));
 
     }
+
     //Spawning floors
     void Create()
     {
@@ -328,14 +336,7 @@ public class uielements : EditorWindow
 
     }
 
-    void Changematerials()
-    {//this function does nothing
-        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] != null)
-        {//this calls nothing
-            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Renderer>().material = Selectedmaterial;
-            
-        }
-    }
+    
 
     //Remove Floor
     void Remove()
@@ -350,13 +351,18 @@ public class uielements : EditorWindow
                     if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[i] != null)
                     {
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[i]);
-                        
+            //            if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+            //            {
+            //                currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].Leftwall();
+            //}
+
+
                     }
                 } 
 
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
                         
-                        //Debug.Log("Square removed");
+                        
                         
             }
             
