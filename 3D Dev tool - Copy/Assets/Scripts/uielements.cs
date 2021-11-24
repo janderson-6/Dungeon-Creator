@@ -171,9 +171,10 @@ public class uielements : EditorWindow
 
             for (int i = 0; i < materialArray.Length; i++)
             {
-                GUIContent content = new GUIContent(AssetPreview.GetAssetPreview(materialArray[i]));
+                GUIContent content = new GUIContent(AssetPreview.GetAssetPreview(materialArray[i]), Selectedmaterial.name);
                 if (GUI.Button(new Rect(500, 50*i, 50, 50), content))
                 {
+                    GUI.Label(new Rect(500, 50*1, 100, 40), GUI.tooltip);
                     Selectedmaterial = materialArray[i];
                     ChangeBrush(ColourArray[i]);
                 }
