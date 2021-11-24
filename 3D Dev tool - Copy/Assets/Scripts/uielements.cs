@@ -340,7 +340,6 @@ public class uielements : EditorWindow
                         }
                     }
 
-
                         //Check Right
                         if (0 == unityxvalue)
                         {
@@ -416,7 +415,6 @@ public class uielements : EditorWindow
                         currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.name = "todestroy";
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
                         currentManager.tilesInThisObject[unityxvalue, unityyvalue] = null;
-                    
                 }   
             } 
         } 
@@ -431,7 +429,6 @@ public class uielements : EditorWindow
             Renderer rendwall = walltile.GetComponent<Renderer>();
             walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
             walltile.transform.Rotate(0.0f, 270.0f, 0.0f, Space.Self);
-        
             currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0] = walltile;
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
         }
@@ -440,68 +437,103 @@ public class uielements : EditorWindow
     }
     void LeftwallRightspace()
     {   //check spaces to the left
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)-1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
-        walltile.transform.Rotate(0.0f, 270.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue+1, unityyvalue].gameObject.transform, true);
-    }
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
+            walltile.transform.Rotate(0.0f, 270.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue+1, unityyvalue].GetComponent<Allwalls>().walltiles[0] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue+1, unityyvalue].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Leftwall on Right Square Exists already"); }
+     }
     
     void Rightwall()
     {   //check spaces to the right
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
-        walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+            walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Rightwall Exists already"); }
     }
     void RightwallLeftspace()
     {   //check spaces to the left
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
-        walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].GetComponent<Allwalls>().walltiles[1] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue-1, unityyvalue].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+            walltile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue-1, unityyvalue].GetComponent<Allwalls>().walltiles[1] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue-1, unityyvalue].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Leftwall on Left Square Exists already"); }
     }
     void Backwall()
     {   //check spaces behind
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
-        walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+            walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Backwall Exists already"); }
     }
     void BackwallFrontspace()
     {   //check spaces behind
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z) ));
-        walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue-1].GetComponent<Allwalls>().walltiles[2] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue-1].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x)), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
+            walltile.transform.Rotate(0.0f, 0.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue-1].GetComponent<Allwalls>().walltiles[2] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue-1].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Backwall on Front square Exists already"); }
     }
 
     void Frontwall()
     {   //check spaces in front
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
-        walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)));
+            walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Frontwall Exists already"); }
     }
     void FrontwallBackspace()
     {   //check spaces in front
-        GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
-        Renderer rendwall = walltile.GetComponent<Renderer>();
-        walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z)+1));
-        walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
-        currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].GetComponent<Allwalls>().walltiles[3] = walltile;
-        walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].gameObject.transform, true);
+        if (currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3] == null)
+        {
+            GameObject walltile = Instantiate(Resources.Load("Assets/Wall tile Wooden")) as GameObject;
+            Renderer rendwall = walltile.GetComponent<Renderer>();
+            walltile.transform.position = new Vector3Int(((-unityxvalue + (int)currentManager.transform.position.x) - 1), 0, ((unityyvalue + (int)currentManager.transform.position.z) + 1));
+            walltile.transform.Rotate(0.0f, 180.0f, 0.0f, Space.Self);
+            currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].GetComponent<Allwalls>().walltiles[3] = walltile;
+            walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].gameObject.transform, true);
+        }
+        else
+        { Debug.Log("Backwall on Back square Exists already"); }
     }
 
 }
