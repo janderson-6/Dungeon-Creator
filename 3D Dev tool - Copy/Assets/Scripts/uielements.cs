@@ -7,7 +7,8 @@ using System;
 enum UIdata
 {
     MainMenu,
-    Drawing
+    Drawing,
+    Helpme
     
 }
 
@@ -15,24 +16,19 @@ public class uielements : EditorWindow
 {
 
     //Variables
-    
+    UIdata currentState = UIdata.Helpme;
     Color[] ColourArray = new Color[9];
+    Color[] redblock = { new Color32(225, 0, 0, 255) };
+    Color[] grayblock = { new Color32(128, 128, 128, 1) };
     Material Selectedmaterial;
     Material[] materialArray = new Material[9];
-    UIdata currentState = UIdata.MainMenu;
     Tilemanager currentManager;
     Tilemanager[] allTileManagers = new Tilemanager[0];
     Texture2D texture;
+    Texture2D Logo;
     private float range = 0.0f;
-    int xblock;
-    int yblock;
-    Color[] redblock = { new Color32(225, 0, 0, 255) };
-    Color[] grayblock = { new Color32(128, 128, 128, 1) };
-    int blocksize = 50;
-    int border = 0;
-    int background = 500;
-    int unityxvalue = 0;
-    int unityyvalue = 0;
+    int xblock; int yblock;
+    int blocksize = 50; int background = 500; int unityxvalue = 0; int unityyvalue = 0; int border = 0;
 
     //Menu Item single drop down
     #region Open Editor
@@ -45,7 +41,7 @@ public class uielements : EditorWindow
 
     void OnEnable()
     {
-        ChangeState(UIdata.MainMenu);
+        ChangeState(UIdata.Helpme);
         //Example grid block colours
         redblock = new Color[blocksize * blocksize];
         for (int i = 0; i < blocksize * blocksize; i++)
@@ -60,17 +56,20 @@ public class uielements : EditorWindow
         }
 
         texture = new Texture2D(background, background);
-        for (int x = 0; x < texture.height; x++)
+        for (int x = 50; x < texture.height-50; x++)
         {
-            for (int y = 0; y < texture.width; y++)
+            for (int y = 50; y < texture.width-50; y++)
             {
                 Color color = Color.gray;
                 texture.SetPixel(x, y, color);
             }
         }
+
+        //Paint texture to window
         texture.Apply();
         Repaint();
 
+        //Material Arrays for given textures
         materialArray[0] = (Material)Resources.Load("Materials/Dirt");
         ColourArray[0] = new Color32 (62,41,26,255);
         materialArray[1] = (Material)Resources.Load("Materials/Grass");
@@ -91,14 +90,37 @@ public class uielements : EditorWindow
         ColourArray[8] = new Color32(92,89,89,255);
         Selectedmaterial = materialArray[0];
         ChangeBrush(ColourArray[0]);
+
+        Logo = (Texture2D)Resources.Load("Materials/logousethis", typeof(Texture2D));
     }
 
     void OnGUI()
     {
-        //Main Menu Options
-        #region Mainmenu
-        if (currentState == UIdata.MainMenu)
+        #region Helpme
+        if (currentState == UIdata.Helpme)
         {
+
+            EditorGUILayout.LabelField("Dungeon Creator", EditorStyles.wordWrappedLabel);
+            GUILayout.Label(Logo);
+            //GUILayout.Space(70);
+
+            if (GUILayout.Button("Main Menu"))
+            {
+                ChangeState(UIdata.MainMenu);
+            }
+
+
+        }
+
+
+
+
+            #endregion
+            //Main Menu Options
+            #region Mainmenu
+            if (currentState == UIdata.MainMenu)
+        {
+
             for (int i = 0; i < allTileManagers.Length; i++)
             {
                 if (GUILayout.Button("Edit " + allTileManagers[i].name + " tiles"))
@@ -107,14 +129,14 @@ public class uielements : EditorWindow
                     ChangeState(UIdata.Drawing);
                 }
             }
-         if (GUILayout.Button("Draw new room"))
-         {
-             GameObject NewTileManager = new GameObject();
-             NewTileManager.name = "Room " + allTileManagers.Length;
-             NewTileManager.AddComponent<Tilemanager>().tilesInThisObject = new GameObject[background / blocksize, background / blocksize];
-             currentManager = NewTileManager.GetComponent<Tilemanager>();
-             ChangeState(UIdata.Drawing);
-         }
+            if (GUILayout.Button("Draw new room"))
+            {
+                GameObject NewTileManager = new GameObject();
+                NewTileManager.name = "Room " + allTileManagers.Length;
+                NewTileManager.AddComponent<Tilemanager>().tilesInThisObject = new GameObject[background / blocksize, background / blocksize];
+                currentManager = NewTileManager.GetComponent<Tilemanager>();
+                ChangeState(UIdata.Drawing);
+            }
         }
         #endregion
 
@@ -126,7 +148,6 @@ public class uielements : EditorWindow
             if (range > 0.1f)
             {
                 Event e = Event.current;
-                //Debug.Log("Base Co-ords " + e.mousePosition + " " + "Placement at: " + Floor(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + Environment.NewLine + "Upper Bounds " + Ceil(e.mousePosition.x) + ", " + Ceil(e.mousePosition.y) + " " + "Lower Bounds " + Floor(e.mousePosition.x) + ", " + Floor(e.mousePosition.y) + " " + "Unity Co-ords: " + unityxvalue + ", " + unityyvalue);
                 range = 0.0f;
             }
 
@@ -147,37 +168,52 @@ public class uielements : EditorWindow
             {
                 if (Event.current.mousePosition.x < background - border && Event.current.mousePosition.x > 0 && Event.current.mousePosition.y < background - border && Event.current.mousePosition.y > 0)
                 {
-                    if (Event.current.button == 0)
+                    if ((1 <= unityxvalue) && ((unityxvalue <= currentManager.tilesInThisObject.GetLength(0) - 2)))
                     {
-                        texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
-                        Create();
-                        //Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
-                    }
-                    if (Event.current.button == 1)
-                    {
-                        texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, grayblock);
-                        Remove();
+                        if ((1 <= unityyvalue) && ((unityyvalue <= currentManager.tilesInThisObject.GetLength(0) - 2)))
+                        {
+                            if (Event.current.button == 0)
+                            {
+                                texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, redblock);
+                                Create();
+                                //Debug.Log("Red Square placed at LB x and UB y: " + Floor(Event.current.mousePosition.x) + " " + Ceil(Event.current.mousePosition.y));
+                            }
+                            if (Event.current.button == 1)
+                            {
+                                texture.SetPixels(xblock, texture.height - yblock, blocksize, blocksize, grayblock);
+                                Remove();
+                            }
+                        }
                     }
                   
                 }
             }
+            //Paint new textures onto window
             texture.Apply();
             Repaint();
             GUI.DrawTexture(new Rect(0, 0, background, background), texture);
 
+            //Buttons for drawing windows
+            
             for (int i = 0; i < materialArray.Length; i++)
             {
                 GUIContent content = new GUIContent(AssetPreview.GetAssetPreview(materialArray[i]), Selectedmaterial.name);
-                if (GUI.Button(new Rect(500, 50*i, 50, 50), content))
+                if (GUI.Button(new Rect(500, 50+(50*i), 50, 50), content))
                 {
-                    GUI.Label(new Rect(500, 50*1, 100, 40), GUI.tooltip);
+                    GUI.Label(new Rect(500,50+(50*i), 100, 40), GUI.tooltip);
                     Selectedmaterial = materialArray[i];
                     ChangeBrush(ColourArray[i]);
                 }
+                //if (GUI.Button(new Rect(500, 0, 50, 50), "Back"))
+                //{
+                //    ChangeState(UIdata.MainMenu);
+
+                //}
             }
         }
         #endregion   
       }
+    //Changing texture buttons
     void ChangeBrush(Color32 newColour)
     {
         for (int i = 0; i < blocksize * blocksize; i++)
@@ -210,9 +246,7 @@ public class uielements : EditorWindow
                     if (currentManager.tilesInThisObject[x, y] != null)
                     {
                         int index = Array.IndexOf(materialArray, currentManager.tilesInThisObject[x, y].GetComponent<Renderer>().sharedMaterial);
-                        //Debug.Log("help, "+ index);
                         ChangeBrush(ColourArray[index]);
-                        
                         texture.SetPixels((blocksize * x), blocksize * (currentManager.tilesInThisObject.GetLength(1) - (y + 1)), blocksize, blocksize, redblock);
                     }                                       
                 }
@@ -220,17 +254,7 @@ public class uielements : EditorWindow
         }      
     }
 
-    //Math for rounding for upper and lower bounds
-    private float Floor(float input)
-    {
-        return blocksize * Mathf.Floor((input / blocksize));
-
-    }
-    private float Ceil(float input)
-    {
-        return blocksize * Mathf.Ceil((input / blocksize));
-    }
-
+   
     //Spawning floors
     void Create()
     {
@@ -238,98 +262,82 @@ public class uielements : EditorWindow
         {
             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue] == null)
             {
-                GameObject floortile = Instantiate(Resources.Load("Assets/Tile Cobblestone 1")) as GameObject;
-                Renderer rend = floortile.GetComponent<Renderer>();
-                floortile.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
-                currentManager.tilesInThisObject[unityxvalue, unityyvalue] = floortile;
-                floortile.transform.SetParent(currentManager.gameObject.transform, true);
-                Changematerials();
+                if ((1 <= unityxvalue) && ((unityxvalue <= currentManager.tilesInThisObject.GetLength(0) - 2)))
+                {
+                    if ((1 <= unityyvalue) && ((unityyvalue <= currentManager.tilesInThisObject.GetLength(0) - 2)))
+                    {
+                        GameObject floortile = Instantiate(Resources.Load("Assets/Tile Cobblestone 1")) as GameObject;
+                        Renderer rend = floortile.GetComponent<Renderer>();
+                        floortile.transform.position = new Vector3Int((-unityxvalue + (int)currentManager.transform.position.x), 0, (unityyvalue + (int)currentManager.transform.position.z));
+                        currentManager.tilesInThisObject[unityxvalue, unityyvalue] = floortile;
+                        floortile.transform.SetParent(currentManager.gameObject.transform, true);
+                        Changematerials();
 
-                //LEFTWALLS
-                //IF ON VERY LEFT
-                if (0 == unityxvalue)
-                {
-                    Leftwall();
-                    //THIS IS NEVER CALLED
-                    //if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
-                    //{
-                    //    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
-                        
-                    //}
+                        //LEFTWALLS
+                        if (0 == unityxvalue)
+                        { }
+                        //REMOVING WRONG WALLS
+                        else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
+                        {
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
+                        }
+                        //MAKING WALLS FOR EDGE LEFT FLOOR
+                        else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
+                        {
+                            Leftwall();
+                        }
 
-                }
-                //REMOVING WRONG WALLS
-                else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
-                {
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
-                }
-                //MAKING WALLS FOR EDGE LEFT FLOOR
-                else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
-                {
-                    Leftwall();
-                    
-                }
-
-                //RIGHTWALLS
-                //IF ON VERY RIGHT
-                if (currentManager.tilesInThisObject.GetLength(0) - 1 == unityxvalue)
-                {
-                    Rightwall();
-                }
-                //REMOVING WRONG WALLS
-                else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
-                {
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
-                }
-                //MAKING WALLS FOR EDGE RIGHT FLOOR
-                else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
-                {
-                    Rightwall();
-                }
-
-                //FRONTWALLS
-                //IF ON VERY FRONT
-                if (0 == unityyvalue)
-                {
-                    Frontwall();
-                }
-                //REMOVING WRONG WALLS
-                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] != null)
-                {
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1].GetComponent<Allwalls>().walltiles[2]);
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3]);
-                }
-                //MAKING WALLS FOR EDGE FRONT FLOOR
-                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
-                {
-                    Frontwall();
-                }
-
-                //BACKWALLS
-                //IF ON VERY BACK
-                if (currentManager.tilesInThisObject.GetLength(1) - 1 == unityyvalue)
-                {
-                    Backwall();
-                }
-                //REMOVING WRONG WALLS
-                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] != null)
-                {
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1].GetComponent<Allwalls>().walltiles[3]);
-                    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2]);
-                }
-                //MAKING WALLS FOR EDGE FRONT FLOOR
-                else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
-                {
-                    Backwall();
+                        //RIGHTWALLS
+                        if (currentManager.tilesInThisObject.GetLength(0) - 1 == unityxvalue)
+                        { }
+                        //REMOVING WRONG WALLS
+                        else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+                        {
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[1]);
+                        }
+                        //MAKING WALLS FOR EDGE RIGHT FLOOR
+                        else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
+                        {
+                            Rightwall();
+                        }
+                        //FRONTWALLS
+                        //IF ON VERY FRONT
+                        if (0 == unityyvalue)
+                        { }
+                        //REMOVING WRONG WALLS
+                        else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] != null)
+                        {
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1].GetComponent<Allwalls>().walltiles[2]);
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[3]);
+                        }
+                        //MAKING WALLS FOR EDGE FRONT FLOOR
+                        else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
+                        {
+                            Frontwall();
+                        }
+                        //BACKWALLS
+                        //IF ON VERY BACK
+                        if (currentManager.tilesInThisObject.GetLength(1) - 1 == unityyvalue)
+                        { }
+                        //REMOVING WRONG WALLS
+                        else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] != null)
+                        {
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1].GetComponent<Allwalls>().walltiles[3]);
+                            DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[2]);
+                        }
+                        //MAKING WALLS FOR EDGE FRONT FLOOR
+                        else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
+                        {
+                            Backwall();
+                        }
+                    }
                 }
             }
             else Changematerials();
         }                   
     }
-
-    
 
     //Remove Floor
     void Remove()
@@ -347,100 +355,74 @@ public class uielements : EditorWindow
                             DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].GetComponent<Allwalls>().walltiles[i]);
                         }
                     }
-
                         //Check Right
                         if (0 == unityxvalue)
-                        {
-                            if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
-                            {
-                                LeftwallRightspace();
-                            }
-                        //THIS IS NEVER CORRECT
-                        //if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
-                        //{
-                        //    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
-
-                        //}
-                    }
-                    else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
+                        { }
+                        else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
                         {
                             if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].gameObject.name != "todestroy")
                             {
                                 RightwallLeftspace();
-                                Debug.Log("happeningleft");
                             }
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
-                        {
-
-                        }
+                        { }
 
                         //Check Left
                         if (currentManager.tilesInThisObject.GetLength(0) - 1 == unityxvalue)
-                        {
-                            RightwallLeftspace();
-                            
-
-                        }
+                        { }
                         else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
                         {
                             if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].gameObject.name != "todestroy")
                             {
                                 LeftwallRightspace();
-                                Debug.Log("happeningright");
                             }
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] == null)
-                        {
-
-                        }
+                        { }
 
                         //Check Behind
                         if (0 == unityyvalue)
-                        {
-                            FrontwallBackspace();
-                            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue+1] != null)
-                            {
-                                DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].GetComponent<Allwalls>().walltiles[3]);
-                            }
-                        }
+                        { }
                         else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] != null)
                         {
                             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1].gameObject.name != "todestroy")
                             {
                                 BackwallFrontspace();
-                                Debug.Log("happeningFront");
                             }
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] == null)
-                        {
+                        { }
 
-                        }
-
-                        //CHeck in front
+                        //Check in front
                         if (currentManager.tilesInThisObject.GetLength(0) - 1 == unityyvalue)
-                        {
-                            BackwallFrontspace();
-                        }
-
+                        { }
                         else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] != null)
                         {
                             if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1].gameObject.name != "todestroy")
                             {
                                 FrontwallBackspace();
-                                Debug.Log("happeningback");
                             }
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue + 1] == null)
-                        {
-
-                        }
+                        { }
                         currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.name = "todestroy";
                         DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject);
                         currentManager.tilesInThisObject[unityxvalue, unityyvalue] = null;
                 }   
             } 
         } 
+    }
+
+    //Math for rounding for upper and lower bounds pixel count
+    private float Floor(float input)
+    {
+        return blocksize * Mathf.Floor((input / blocksize));
+
+    }
+    private float Ceil(float input)
+    {
+        return blocksize * Mathf.Ceil((input / blocksize));
     }
 
     //Spawning walls
@@ -456,7 +438,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Leftwall Exists already"); }
+        { }
     }
     void LeftwallRightspace()
     {   //check spaces to the left
@@ -470,7 +452,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue+1, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Leftwall on Right Square Exists already"); }
+        { }
      }
     
     void Rightwall()
@@ -485,7 +467,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Rightwall Exists already"); }
+        { }
     }
     void RightwallLeftspace()
     {   //check spaces to the left
@@ -499,7 +481,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue-1, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Leftwall on Left Square Exists already"); }
+        { }
     }
     void Backwall()
     {   //check spaces behind
@@ -513,7 +495,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Backwall Exists already"); }
+        { }
     }
     void BackwallFrontspace()
     {   //check spaces behind
@@ -527,7 +509,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue-1].gameObject.transform, true);
         }
         else
-        { Debug.Log("Backwall on Front square Exists already"); }
+        { }
     }
 
     void Frontwall()
@@ -542,7 +524,7 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue].gameObject.transform, true);
         }
         else
-        { Debug.Log("Frontwall Exists already"); }
+        { }
     }
     void FrontwallBackspace()
     {   //check spaces in front
@@ -556,9 +538,10 @@ public class uielements : EditorWindow
             walltile.transform.SetParent(currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].gameObject.transform, true);
         }
         else
-        { Debug.Log("Backwall on Back square Exists already"); }
+        { }
     }
 
+   
 }
 
 #endregion
