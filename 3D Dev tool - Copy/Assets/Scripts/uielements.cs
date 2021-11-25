@@ -250,6 +250,13 @@ public class uielements : EditorWindow
                 if (0 == unityxvalue)
                 {
                     Leftwall();
+                    //THIS IS NEVER CALLED
+                    //if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+                    //{
+                    //    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
+                        
+                    //}
+
                 }
                 //REMOVING WRONG WALLS
                 else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
@@ -261,6 +268,7 @@ public class uielements : EditorWindow
                 else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] == null)
                 {
                     Leftwall();
+                    
                 }
 
                 //RIGHTWALLS
@@ -343,9 +351,18 @@ public class uielements : EditorWindow
                         //Check Right
                         if (0 == unityxvalue)
                         {
-                            LeftwallRightspace();
-                        }
-                        else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
+                            if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+                            {
+                                LeftwallRightspace();
+                            }
+                        //THIS IS NEVER CORRECT
+                        //if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
+                        //{
+                        //    DestroyImmediate(currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue].GetComponent<Allwalls>().walltiles[0]);
+
+                        //}
+                    }
+                    else if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue] != null)
                         {
                             if (currentManager.tilesInThisObject[unityxvalue - 1, unityyvalue].gameObject.name != "todestroy")
                             {
@@ -362,6 +379,8 @@ public class uielements : EditorWindow
                         if (currentManager.tilesInThisObject.GetLength(0) - 1 == unityxvalue)
                         {
                             RightwallLeftspace();
+                            
+
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue + 1, unityyvalue] != null)
                         {
@@ -380,6 +399,10 @@ public class uielements : EditorWindow
                         if (0 == unityyvalue)
                         {
                             FrontwallBackspace();
+                            if (currentManager.tilesInThisObject[unityxvalue, unityyvalue+1] != null)
+                            {
+                                DestroyImmediate(currentManager.tilesInThisObject[unityxvalue, unityyvalue+1].GetComponent<Allwalls>().walltiles[3]);
+                            }
                         }
                         else if (currentManager.tilesInThisObject[unityxvalue, unityyvalue - 1] != null)
                         {
