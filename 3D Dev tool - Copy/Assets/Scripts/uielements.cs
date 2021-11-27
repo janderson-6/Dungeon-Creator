@@ -101,7 +101,7 @@ public class uielements : EditorWindow
         {
 
             EditorGUILayout.LabelField("Dungeon Creator", EditorStyles.wordWrappedLabel);
-            GUILayout.Label(Logo);
+            GUILayout.Label(Logo); 
             //GUILayout.Space(70);
 
             if (GUILayout.Button("Main Menu"))
