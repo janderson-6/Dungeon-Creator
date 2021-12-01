@@ -111,10 +111,6 @@ public class uielements : EditorWindow
 
 
         }
-
-
-
-
             #endregion
             //Main Menu Options
             #region Mainmenu
